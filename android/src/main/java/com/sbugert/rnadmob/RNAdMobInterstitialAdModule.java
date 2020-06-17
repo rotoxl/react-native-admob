@@ -1,8 +1,8 @@
 package com.sbugert.rnadmob;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -13,15 +13,15 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableNativeArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
@@ -124,6 +124,12 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
         this.testDevices = list.toArray(new String[list.size()]);
     }
 
+    Boolean _npa=false;
+    @ReactMethod
+    public void setNPA(Boolean npa) {
+        this._npa = npa;
+    }
+
     @ReactMethod
     public void requestAd(final Promise promise) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -142,6 +148,11 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
                             }
                             adRequestBuilder.addTestDevice(testDevice);
                         }
+                    }
+                    if (_npa){
+                        Bundle extras = new Bundle();
+                        extras.putString("npa", "1");
+                        adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
                     }
                     AdRequest adRequest = adRequestBuilder.build();
                     mInterstitialAd.loadAd(adRequest);
