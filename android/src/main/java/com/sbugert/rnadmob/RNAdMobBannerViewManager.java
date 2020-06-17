@@ -1,7 +1,7 @@
 package com.sbugert.rnadmob;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.os.Bundle;
 import android.view.View;
 
 import com.facebook.react.bridge.Arguments;
@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.view.ReactViewGroup;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -24,6 +25,8 @@ import com.google.android.gms.ads.AdView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 class ReactAdView extends ReactViewGroup {
 
@@ -135,6 +138,11 @@ class ReactAdView extends ReactViewGroup {
                 adRequestBuilder.addTestDevice(testDevice);
             }
         }
+        if (this._npa){
+            Bundle extras = new Bundle();
+            extras.putString("npa", "1");
+            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
+        }
         AdRequest adRequest = adRequestBuilder.build();
         this.adView.loadAd(adRequest);
     }
@@ -157,6 +165,10 @@ class ReactAdView extends ReactViewGroup {
         this.adSize = adSize;
         this.adView.setAdSize(adSize);
     }
+    private Boolean _npa;
+    public void setNPA(Boolean npa){
+        this._npa=npa;
+    }
 }
 
 public class RNAdMobBannerViewManager extends ViewGroupManager<ReactAdView> {
@@ -164,6 +176,8 @@ public class RNAdMobBannerViewManager extends ViewGroupManager<ReactAdView> {
     public static final String REACT_CLASS = "RNGADBannerView";
 
     public static final String PROP_AD_SIZE = "adSize";
+    public static final String PROP_AD_NPA = "npa";
+
     public static final String PROP_AD_UNIT_ID = "adUnitID";
     public static final String PROP_TEST_DEVICES = "testDevices";
 
@@ -214,6 +228,11 @@ public class RNAdMobBannerViewManager extends ViewGroupManager<ReactAdView> {
     public void setPropAdSize(final ReactAdView view, final String sizeString) {
         AdSize adSize = getAdSizeFromString(sizeString);
         view.setAdSize(adSize);
+    }
+
+    @ReactProp(name = PROP_AD_NPA)
+    public void setNPA(final ReactAdView view, Boolean npa) {
+        view.setNPA(npa);
     }
 
     @ReactProp(name = PROP_AD_UNIT_ID)
