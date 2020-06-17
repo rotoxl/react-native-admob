@@ -1,8 +1,10 @@
 package com.sbugert.rnadmob;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.os.Bundle;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
@@ -16,7 +18,9 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.view.ReactViewGroup;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.doubleclick.AppEventListener;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -34,6 +38,7 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
     AdSize[] validAdSizes;
     String adUnitID;
     AdSize adSize;
+
 
     public ReactPublisherAdView(final Context context) {
         super(context);
@@ -155,6 +160,13 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
                 adRequestBuilder.addTestDevice(testDevice);
             }
         }
+
+        if (this._npa!=null){
+            Bundle extras = new Bundle();
+            extras.putString("npa", "1");
+            adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
+        }
+
         PublisherAdRequest adRequest = adRequestBuilder.build();
         this.adView.loadAd(adRequest);
     }
@@ -188,6 +200,11 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
         event.putString("info", info);
         sendEvent(RNPublisherBannerViewManager.EVENT_APP_EVENT, event);
     }
+
+    private String _npa=null;
+    public void setNPA(String npa){
+        this._npa=npa;
+    }
 }
 
 public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublisherAdView> {
@@ -195,6 +212,8 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
     public static final String REACT_CLASS = "RNDFPBannerView";
 
     public static final String PROP_AD_SIZE = "adSize";
+    public static final String PROP_AD_NPA = "npa";
+
     public static final String PROP_VALID_AD_SIZES = "validAdSizes";
     public static final String PROP_AD_UNIT_ID = "adUnitID";
     public static final String PROP_TEST_DEVICES = "testDevices";
@@ -248,6 +267,11 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
     public void setPropAdSize(final ReactPublisherAdView view, final String sizeString) {
         AdSize adSize = getAdSizeFromString(sizeString);
         view.setAdSize(adSize);
+    }
+
+    @ReactProp(name = PROP_AD_NPA)
+    public void setNPA(final ReactPublisherAdView view, final String npa) {
+        view.setNPA(npa);
     }
 
     @ReactProp(name = PROP_VALID_AD_SIZES)
