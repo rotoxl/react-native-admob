@@ -1,3 +1,49 @@
+# GDPR
+## Android: NOT TESTED
+I've added a few code to modify the request to send npa bits under certain circumstances
+
+```jsx
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+} from 'react-native-admob'
+
+// Display a banner
+<AdMobBanner
+  adSize="fullBanner"
+  adUnitID="your-admob-unit-id"
+  testDevices={[AdMobBanner.simulatorId]}
+  onAdFailedToLoad={error => console.error(error)}
+  npa={true} //<-- Google Ads SDK serves personalized ads by default. This method makes it ask for NON personalized content, making it GDPR compliant https://support.google.com/admanager/answer/9005435?hl=en
+/>
+
+// Display a DFP Publisher banner
+<PublisherBanner
+  adSize="fullBanner"
+  adUnitID="your-admob-unit-id"
+  testDevices={[PublisherBanner.simulatorId]}
+  onAdFailedToLoad={error => console.error(error)}
+  onAppEvent={event => console.log(event.name, event.info)}
+  npa={true} //<-- Google Ads SDK serves personalized ads by default. This method makes it ask for NON personalized content, making it GDPR compliant https://support.google.com/admanager/answer/9005435?hl=en
+/>
+
+// Display an interstitial
+AdMobInterstitial.setAdUnitID('your-admob-unit-id');
+AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+AdMobInterstitial.setNPA(true) //<-- Google Ads SDK serves personalized ads by default. This method makes it ask for NON personalized content, making it GDPR compliant https://support.google.com/admanager/answer/9005435?hl=en
+AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+
+
+```
+
+
+
+
+
+
+
 # react-native-admob [![npm](https://img.shields.io/npm/v/react-native-admob.svg)](https://www.npmjs.com/package/react-native-admob) [![npm (next)](https://img.shields.io/npm/v/react-native-admob/next.svg)](https://www.npmjs.com/package/react-native-admob)
 
 ### ⚠️ Please note, the master branch tracks development of version 2 of this library, which is currently in beta. For version 1 please check out the [1.x branch](https://github.com/sbugert/react-native-admob/tree/1.x).
