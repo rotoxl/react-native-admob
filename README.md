@@ -1,6 +1,6 @@
 # GDPR
-## Android: NOT TESTED
-I've added a few code to modify the request to send npa bits under certain circumstances
+## NOT TESTED ## Android & iOS
+I've added a few code to modify the request and allow to send npa bits under certain circumstances
 
 ```jsx
 import {
