@@ -16,6 +16,7 @@
 @implementation RNDFPBannerView
 {
     DFPBannerView  *_bannerView;
+	BOOL _npa;
 }
 
 - (void)dealloc
@@ -55,6 +56,15 @@
 - (void)loadBanner {
     GADRequest *request = [GADRequest request];
     request.testDevices = _testDevices;
+	
+	NSLog(@"npa dfpbanner: %@", _npa ? @"yes" : @"no");
+	if (_npa == YES){
+		//https://developers.google.com/admob/ios/eu-consent#objective-c_7
+		GADExtras *extras = [[GADExtras alloc] init];
+		extras.additionalParameters = @{@"npa": @"1"};
+		[request registerAdNetworkExtras:extras];
+	}
+	
     [_bannerView loadRequest:request];
 }
 

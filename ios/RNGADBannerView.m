@@ -58,9 +58,21 @@
     }
     GADRequest *request = [GADRequest request];
     request.testDevices = _testDevices;
-    [_bannerView loadRequest:request];
+    
+	NSLog(@"npa gad banner: %@", _npa ? @"yes" : @"no");
+	if (_npa == YES){
+		//https://developers.google.com/admob/ios/eu-consent#objective-c_7
+		GADExtras *extras = [[GADExtras alloc] init];
+		extras.additionalParameters = @{@"npa": @"1"};
+		[request registerAdNetworkExtras:extras];
+	}
+	[_bannerView loadRequest:request];
 }
 
+- (void)setNPA:(BOOL)npa
+{
+	_npa = npa;
+}
 - (void)setTestDevices:(NSArray *)testDevices
 {
     _testDevices = RNAdMobProcessTestDevices(testDevices, kGADSimulatorID);

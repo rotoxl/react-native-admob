@@ -20,6 +20,7 @@ static NSString *const kEventVideoCompleted = @"rewardedVideoAdVideoCompleted";
 {
     NSString *_adUnitID;
     NSArray *_testDevices;
+	BOOL _npa;
     RCTPromiseResolveBlock _requestAdResolve;
     RCTPromiseRejectBlock _requestAdReject;
     BOOL hasListeners;
@@ -56,6 +57,10 @@ RCT_EXPORT_METHOD(setAdUnitID:(NSString *)adUnitID)
 {
     _adUnitID = adUnitID;
 }
+RCT_EXPORT_METHOD(setNPA:(BOOL)npa)
+{
+	_npa = npa;
+}
 
 RCT_EXPORT_METHOD(setTestDevices:(NSArray *)testDevices)
 {
@@ -70,6 +75,15 @@ RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     [GADRewardBasedVideoAd sharedInstance].delegate = self;
     GADRequest *request = [GADRequest request];
     request.testDevices = _testDevices;
+	
+	NSLog(@"npa admobRewarded: %@", _npa ? @"yes" : @"no");
+	if (_npa == YES){
+		//https://developers.google.com/admob/ios/eu-consent#objective-c_7
+		GADExtras *extras = [[GADExtras alloc] init];
+		extras.additionalParameters = @{@"npa": @"1"};
+		[request registerAdNetworkExtras:extras];
+	}
+	
     [[GADRewardBasedVideoAd sharedInstance] loadRequest:request
                                            withAdUnitID:_adUnitID];
 }
