@@ -127,7 +127,10 @@ RCT_EXPORT_METHOD(isReady:(RCTResponseSenderBlock)callback)
     if (hasListeners) {
         [self sendEventWithName:kEventAdLoaded body:nil];
     }
-    _requestAdResolve(nil);
+	if (_requestAdResolve != nil){
+		_requestAdResolve(nil);
+	}
+    
 }
 
 - (void)interstitial:(__unused GADInterstitial *)interstitial didFailToReceiveAdWithError:(GADRequestError *)error

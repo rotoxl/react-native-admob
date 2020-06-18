@@ -16,7 +16,6 @@
 @implementation RNDFPBannerView
 {
     DFPBannerView  *_bannerView;
-	BOOL _npa;
 }
 
 - (void)dealloc
@@ -80,6 +79,11 @@
         }
     }];
     _bannerView.validAdSizes = validAdSizes;
+}
+
+- (void)setNPA:(BOOL)npa
+{
+	_npa = npa;
 }
 
 - (void)setTestDevices:(NSArray *)testDevices

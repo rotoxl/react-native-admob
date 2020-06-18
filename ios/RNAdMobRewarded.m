@@ -130,7 +130,10 @@ RCT_EXPORT_METHOD(isReady:(RCTResponseSenderBlock)callback)
     if (hasListeners) {
         [self sendEventWithName:kEventAdLoaded body:nil];
     }
-    _requestAdResolve(nil);
+	
+	if (_requestAdResolve != nil){
+		_requestAdResolve(nil);
+	}
 }
 
 - (void)rewardBasedVideoAdDidOpen:(__unused GADRewardBasedVideoAd *)rewardBasedVideoAd
