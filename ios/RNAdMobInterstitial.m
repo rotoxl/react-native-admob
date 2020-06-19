@@ -139,7 +139,9 @@ RCT_EXPORT_METHOD(isReady:(RCTResponseSenderBlock)callback)
         NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_REQUEST_FAILED", error.localizedDescription, error);
         [self sendEventWithName:kEventAdFailedToLoad body:jsError];
     }
-    _requestAdReject(@"E_AD_REQUEST_FAILED", error.localizedDescription, error);
+	if (_requestAdReject != nil){
+		_requestAdReject(@"E_AD_REQUEST_FAILED", error.localizedDescription, error);
+	}
 }
 
 - (void)interstitialWillPresentScreen:(__unused GADInterstitial *)ad
