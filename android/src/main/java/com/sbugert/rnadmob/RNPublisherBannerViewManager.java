@@ -161,7 +161,7 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
             }
         }
 
-        if (this._npa!=null){
+        if (this._npa){
             Bundle extras = new Bundle();
             extras.putString("npa", "1");
             adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
@@ -201,8 +201,8 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
         sendEvent(RNPublisherBannerViewManager.EVENT_APP_EVENT, event);
     }
 
-    private String _npa=null;
-    public void setNPA(String npa){
+    private Boolean _npa=null;
+    public void setNPA(Boolean npa){
         this._npa=npa;
     }
 }
@@ -270,7 +270,7 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
     }
 
     @ReactProp(name = PROP_AD_NPA)
-    public void setNPA(final ReactPublisherAdView view, final String npa) {
+    public void setNPA(final ReactPublisherAdView view, Boolean npa) {
         view.setNPA(npa);
     }
 
