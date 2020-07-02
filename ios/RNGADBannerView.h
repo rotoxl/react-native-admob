@@ -12,6 +12,8 @@
 
 @property (nonatomic, copy) NSArray *testDevices;
 @property (nonatomic) BOOL npa;
+@property (nonatomic, copy) NSDictionary *targets;
+@property (nonatomic, copy) NSArray *validAdSizes;
 
 @property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
 @property (nonatomic, copy) RCTBubblingEventBlock onAdLoaded;

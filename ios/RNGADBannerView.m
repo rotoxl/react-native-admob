@@ -28,7 +28,7 @@
         super.backgroundColor = [UIColor clearColor];
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
-        _bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner];
+        _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeFluid];
         _bannerView.delegate = self;
         _bannerView.adSizeDelegate = self;
         _bannerView.rootViewController = rootViewController;
@@ -56,7 +56,7 @@
                                 });
         }
     }
-    GADRequest *request = [GADRequest request];
+    DFPRequest *request = [DFPRequest request];
     request.testDevices = _testDevices;
     
 	NSLog(@"npa gad banner: %@", _npa ? @"yes" : @"no");
@@ -66,6 +66,10 @@
 		extras.additionalParameters = @{@"npa": @"1"};
 		[request registerAdNetworkExtras:extras];
 	}
+	if (_targets!=nil){
+		[request setCustomTargeting:_targets];
+	}
+	
 	[_bannerView loadRequest:request];
 }
 

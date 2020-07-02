@@ -21,6 +21,7 @@ static NSString *const kEventVideoCompleted = @"rewardedVideoAdVideoCompleted";
     NSString *_adUnitID;
     NSArray *_testDevices;
 	BOOL _npa;
+	NSDictionary *_targets;
     RCTPromiseResolveBlock _requestAdResolve;
     RCTPromiseRejectBlock _requestAdReject;
     BOOL hasListeners;
@@ -60,6 +61,10 @@ RCT_EXPORT_METHOD(setAdUnitID:(NSString *)adUnitID)
 RCT_EXPORT_METHOD(setNPA:(BOOL)npa)
 {
 	_npa = npa;
+}
+RCT_EXPORT_METHOD(setTargets:(NSDictionary *)targets)
+{
+	_targets = targets;
 }
 
 RCT_EXPORT_METHOD(setTestDevices:(NSArray *)testDevices)

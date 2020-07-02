@@ -20,6 +20,7 @@ static NSString *const kEventAdLeftApplication = @"interstitialAdLeftApplication
     NSString *_adUnitID;
     NSArray *_testDevices;
 	BOOL _npa;
+	NSDictionary *_targets;
 	
     RCTPromiseResolveBlock _requestAdResolve;
     RCTPromiseRejectBlock _requestAdReject;
@@ -59,6 +60,10 @@ RCT_EXPORT_METHOD(setNPA:(BOOL)npa)
 {
 	_npa = npa;
 }
+RCT_EXPORT_METHOD(setTargets:(NSDictionary *)targets)
+{
+	_targets = targets;
+}
 
 RCT_EXPORT_METHOD(setTestDevices:(NSArray *)testDevices)
 {
@@ -77,7 +82,7 @@ RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
         _interstitial = [[GADInterstitial alloc] initWithAdUnitID:_adUnitID];
         _interstitial.delegate = self;
 
-        GADRequest *request = [GADRequest request];
+        DFPRequest *request = [DFPRequest request];
         request.testDevices = _testDevices;
 		
 		NSLog(@"npa interstitial: %@", _npa ? @"yes" : @"no");
@@ -86,6 +91,9 @@ RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
 			GADExtras *extras = [[GADExtras alloc] init];
 			extras.additionalParameters = @{@"npa": @"1"};
 			[request registerAdNetworkExtras:extras];
+		}
+		if (_targets!=nil){
+			[request setCustomTargeting:_targets];
 		}
 		
         [_interstitial loadRequest:request];

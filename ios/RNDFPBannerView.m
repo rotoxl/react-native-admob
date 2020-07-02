@@ -53,7 +53,7 @@
 #pragma clang diagnostic pop
 
 - (void)loadBanner {
-    GADRequest *request = [GADRequest request];
+    DFPRequest *request = [DFPRequest request];
     request.testDevices = _testDevices;
 	
 	NSLog(@"npa dfpbanner: %@", _npa ? @"yes" : @"no");
@@ -63,6 +63,10 @@
 		extras.additionalParameters = @{@"npa": @"1"};
 		[request registerAdNetworkExtras:extras];
 	}
+	if (_targets!=nil){
+		[request setCustomTargeting:_targets];
+	}
+	
 	
     [_bannerView loadRequest:request];
 }
@@ -84,6 +88,10 @@
 - (void)setNPA:(BOOL)npa
 {
 	_npa = npa;
+}
+- (void)setTargets:(NSDictionary *)targets
+{
+	_targets = targets;
 }
 
 - (void)setTestDevices:(NSArray *)testDevices
