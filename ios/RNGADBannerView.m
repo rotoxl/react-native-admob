@@ -13,7 +13,7 @@
 
 @implementation RNGADBannerView
 {
-    GADBannerView *_bannerView;
+    DFPBannerView *_bannerView;
 }
 
 - (void)dealloc
@@ -29,6 +29,7 @@
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
         _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeFluid];
+		
         _bannerView.delegate = self;
         _bannerView.adSizeDelegate = self;
         _bannerView.rootViewController = rootViewController;
@@ -70,17 +71,35 @@
 		[request setCustomTargeting:_targets];
 	}
 	
+	NSMutableArray *x = [NSMutableArray array];
+			
+	for (int i=0; i< _validAdSizes.count; i++){
+		NSString *item=_validAdSizes[i];
+		NSValue *s;
+		
+		if ( [item isEqualToString:@"banner"]){
+			s=NSValueFromGADAdSize(kGADAdSizeBanner);
+			
+		} else if ([item isEqualToString:@"largeBanner"]){
+			s=NSValueFromGADAdSize(kGADAdSizeLargeBanner);
+		}
+		
+		[x addObject: s ];
+	}
+
+	_bannerView.validAdSizes = x;
 	[_bannerView loadRequest:request];
 }
 
-- (void)setNPA:(BOOL)npa
-{
-	_npa = npa;
-}
 - (void)setTestDevices:(NSArray *)testDevices
 {
     _testDevices = RNAdMobProcessTestDevices(testDevices, kGADSimulatorID);
 }
+- (void)validAdSizes:(NSArray *)validAdSizes
+{
+	_validAdSizes = validAdSizes;
+}
+
 
 -(void)layoutSubviews
 {
