@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableNativeArray;
@@ -28,6 +29,7 @@ import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
@@ -40,7 +42,7 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
     AdSize adSize;
 
 
-    public ReactPublisherAdView(final Context context) {
+  public ReactPublisherAdView(final Context context) {
         super(context);
         this.createAdView();
     }
@@ -151,6 +153,12 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
         this.adView.setAdSizes(adSizesArray);
 
         PublisherAdRequest.Builder adRequestBuilder = new PublisherAdRequest.Builder();
+
+        if (this.targets!=null){
+          Map.Entry<String, Object> entry = this.targets.entrySet().iterator().next();
+          adRequestBuilder.addCustomTargeting(entry.getKey(), (List<String>) entry.getValue());
+        }
+
         if (testDevices != null) {
             for (int i = 0; i < testDevices.length; i++) {
                 String testDevice = testDevices[i];
@@ -171,6 +179,11 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
         this.adView.loadAd(adRequest);
     }
 
+    private HashMap<String, Object> targets;
+    public void setTargets(HashMap<String, Object> targets) {
+      this.targets = targets;
+    }
+
     public void setAdUnitID(String adUnitID) {
         if (this.adUnitID != null) {
             // We can only set adUnitID once, so when it was previously set we have
@@ -185,9 +198,9 @@ class ReactPublisherAdView extends ReactViewGroup implements AppEventListener {
         this.testDevices = testDevices;
     }
 
-    public void setAdSize(AdSize adSize) {
-        this.adSize = adSize;
-    }
+//    public void setAdSize(AdSize adSize) {
+//        this.adSize = adSize;
+//    }
 
     public void setValidAdSizes(AdSize[] adSizes) {
         this.validAdSizes = adSizes;
@@ -217,6 +230,7 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
     public static final String PROP_VALID_AD_SIZES = "validAdSizes";
     public static final String PROP_AD_UNIT_ID = "adUnitID";
     public static final String PROP_TEST_DEVICES = "testDevices";
+    public static final String PROP_TARGETS = "targets";
 
     public static final String EVENT_SIZE_CHANGE = "onSizeChange";
     public static final String EVENT_AD_LOADED = "onAdLoaded";
@@ -263,11 +277,11 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
         return builder.build();
     }
 
-    @ReactProp(name = PROP_AD_SIZE)
-    public void setPropAdSize(final ReactPublisherAdView view, final String sizeString) {
-        AdSize adSize = getAdSizeFromString(sizeString);
-        view.setAdSize(adSize);
-    }
+//    @ReactProp(name = PROP_AD_SIZE)
+//    public void setPropAdSize(final ReactPublisherAdView view, final String sizeString) {
+//        AdSize adSize = getAdSizeFromString(sizeString);
+//        view.setAdSize(adSize);
+//    }
 
     @ReactProp(name = PROP_AD_NPA)
     public void setNPA(final ReactPublisherAdView view, Boolean npa) {
@@ -299,6 +313,12 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
         ArrayList<Object> list = nativeArray.toArrayList();
         view.setTestDevices(list.toArray(new String[list.size()]));
     }
+
+    @ReactProp(name = PROP_TARGETS)
+    public void setPropTargets(final ReactPublisherAdView view, ReadableMap targets){
+      view.setTargets(targets.toHashMap());
+    }
+
 
     private AdSize getAdSizeFromString(String adSize) {
         switch (adSize) {

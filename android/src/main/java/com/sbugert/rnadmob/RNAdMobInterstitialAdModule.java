@@ -11,6 +11,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableNativeArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -18,8 +19,13 @@ import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -33,7 +39,7 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
     public static final String EVENT_AD_CLOSED = "interstitialAdClosed";
     public static final String EVENT_AD_LEFT_APPLICATION = "interstitialAdLeftApplication";
 
-    InterstitialAd mInterstitialAd;
+    PublisherInterstitialAd mInterstitialAd;
     String[] testDevices;
 
     private Promise mRequestAdPromise;
@@ -45,7 +51,7 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
     public RNAdMobInterstitialAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        mInterstitialAd = new InterstitialAd(reactContext);
+        mInterstitialAd = new PublisherInterstitialAd(reactContext);
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -117,6 +123,12 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
         }
     }
 
+    HashMap<String, Object> targets;
+    @ReactMethod
+    public void setTargets(ReadableMap targets) {
+      this.targets = targets.toHashMap();
+    }
+
     @ReactMethod
     public void setTestDevices(ReadableArray testDevices) {
         ReadableNativeArray nativeArray = (ReadableNativeArray)testDevices;
@@ -135,28 +147,32 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run () {
-                if (mInterstitialAd.isLoaded() || mInterstitialAd.isLoading()) {
-                    promise.reject("E_AD_ALREADY_LOADED", "Ad is already loaded.");
-                } else {
-                    mRequestAdPromise = promise;
-                    AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-                    if (testDevices != null) {
-                        for (int i = 0; i < testDevices.length; i++) {
-                            String testDevice = testDevices[i];
-                            if (testDevice == "SIMULATOR") {
-                                testDevice = AdRequest.DEVICE_ID_EMULATOR;
-                            }
-                            adRequestBuilder.addTestDevice(testDevice);
+            if (mInterstitialAd.isLoaded() || mInterstitialAd.isLoading()) {
+                promise.reject("E_AD_ALREADY_LOADED", "Ad is already loaded.");
+            } else {
+                mRequestAdPromise = promise;
+                PublisherAdRequest.Builder adRequestBuilder = new PublisherAdRequest.Builder();
+                if (testDevices != null) {
+                    for (int i = 0; i < testDevices.length; i++) {
+                        String testDevice = testDevices[i];
+                        if (testDevice == "SIMULATOR") {
+                            testDevice = AdRequest.DEVICE_ID_EMULATOR;
                         }
+                        adRequestBuilder.addTestDevice(testDevice);
                     }
-                    if (_npa){
-                        Bundle extras = new Bundle();
-                        extras.putString("npa", "1");
-                        adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
-                    }
-                    AdRequest adRequest = adRequestBuilder.build();
-                    mInterstitialAd.loadAd(adRequest);
                 }
+                if (_npa){
+                    Bundle extras = new Bundle();
+                    extras.putString("npa", "1");
+                    adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
+                }
+                if (targets!=null){
+                  Map.Entry<String, Object> entry = targets.entrySet().iterator().next();
+                  adRequestBuilder.addCustomTargeting(entry.getKey(), (List<String>) entry.getValue());
+                }
+                PublisherAdRequest adRequest = adRequestBuilder.build();
+                mInterstitialAd.loadAd(adRequest);
+            }
             }
         });
     }
