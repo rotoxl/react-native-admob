@@ -71,11 +71,11 @@
 		[request setCustomTargeting:_targets];
 	}
 	
-	NSMutableArray *x = [NSMutableArray array];
+	NSMutableArray *x = [[NSMutableArray alloc] init];
 			
 	for (int i=0; i< _validAdSizes.count; i++){
 		NSString *item=_validAdSizes[i];
-		NSValue *s;
+		NSValue *s = nil;
 		
 		if ( [item isEqualToString:@"banner"]){
 			s=NSValueFromGADAdSize(kGADAdSizeBanner);
@@ -83,8 +83,9 @@
 		} else if ([item isEqualToString:@"largeBanner"]){
 			s=NSValueFromGADAdSize(kGADAdSizeLargeBanner);
 		}
-		
-		[x addObject: s ];
+		if (s != nil){
+			[x addObject: s ];
+		}
 	}
 
 	_bannerView.validAdSizes = x;
