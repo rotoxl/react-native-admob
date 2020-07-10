@@ -296,26 +296,31 @@ public class RNAdMobBannerViewManager extends ViewGroupManager<ReactAdView> {
     }
 
     private AdSize getAdSizeFromString(String adSize) {
+      if (adSize.contains("x")){
+        String[] temp = adSize.split("x");
+        return new AdSize( Integer.parseInt(temp[0]), Integer.parseInt(temp[1]) );
+      } else {
         switch (adSize) {
-            case "banner":
-                return AdSize.BANNER;
-            case "largeBanner":
-                return AdSize.LARGE_BANNER;
-            case "mediumRectangle":
-                return AdSize.MEDIUM_RECTANGLE;
-            case "fullBanner":
-                return AdSize.FULL_BANNER;
-            case "leaderBoard":
-                return AdSize.LEADERBOARD;
-            case "smartBannerPortrait":
-                return AdSize.SMART_BANNER;
-            case "smartBannerLandscape":
-                return AdSize.SMART_BANNER;
-            case "smartBanner":
-                return AdSize.SMART_BANNER;
-            default:
-                return AdSize.BANNER;
+          case "banner":
+            return AdSize.BANNER;
+          case "largeBanner":
+            return AdSize.LARGE_BANNER;
+          case "mediumRectangle":
+            return AdSize.MEDIUM_RECTANGLE;
+          case "fullBanner":
+            return AdSize.FULL_BANNER;
+          case "leaderBoard":
+            return AdSize.LEADERBOARD;
+          case "smartBannerPortrait":
+            return AdSize.SMART_BANNER;
+          case "smartBannerLandscape":
+            return AdSize.SMART_BANNER;
+          case "smartBanner":
+            return AdSize.SMART_BANNER;
+          default:
+            return AdSize.BANNER;
         }
+      }
     }
 
     @Nullable

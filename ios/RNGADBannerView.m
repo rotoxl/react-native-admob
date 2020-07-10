@@ -77,7 +77,15 @@
 		NSString *item=_validAdSizes[i];
 		NSValue *s = nil;
 		
-		if ( [item isEqualToString:@"banner"]){
+		if ( [item containsString:@"x"] ){
+			NSArray *wh = [item componentsSeparatedByString:@"x"];
+			int w = [wh[0] intValue];
+			int h = [wh[1] intValue];
+			
+			CGSize size=CGSizeMake(w, h);
+			s = NSValueFromGADAdSize( GADAdSizeFromCGSize( size ) );
+			
+		} else if ( [item isEqualToString:@"banner"]){
 			s=NSValueFromGADAdSize(kGADAdSizeBanner);
 			
 		} else if ([item isEqualToString:@"largeBanner"]){

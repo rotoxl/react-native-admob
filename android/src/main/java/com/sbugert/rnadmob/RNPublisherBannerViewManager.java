@@ -296,8 +296,8 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
         AdSize[] adSizes = new AdSize[list.size()];
 
         for (int i = 0; i < adSizeStringsArray.length; i++) {
-                String adSizeString = adSizeStringsArray[i];
-                adSizes[i] = getAdSizeFromString(adSizeString);
+            String adSizeString = adSizeStringsArray[i];
+            adSizes[i] = getAdSizeFromString(adSizeString);
         }
         view.setValidAdSizes(adSizes);
     }
@@ -321,25 +321,32 @@ public class RNPublisherBannerViewManager extends ViewGroupManager<ReactPublishe
 
 
     private AdSize getAdSizeFromString(String adSize) {
-        switch (adSize) {
-            case "banner":
-                return AdSize.BANNER;
-            case "largeBanner":
-                return AdSize.LARGE_BANNER;
-            case "mediumRectangle":
-                return AdSize.MEDIUM_RECTANGLE;
-            case "fullBanner":
-                return AdSize.FULL_BANNER;
-            case "leaderBoard":
-                return AdSize.LEADERBOARD;
-            case "smartBannerPortrait":
-                return AdSize.SMART_BANNER;
-            case "smartBannerLandscape":
-                return AdSize.SMART_BANNER;
-            case "smartBanner":
-                return AdSize.SMART_BANNER;
-            default:
-                return AdSize.BANNER;
+        if (adSize.contains("x")){
+          String[] temp = adSize.split("x");
+          return new AdSize( Integer.parseInt(temp[0]), Integer.parseInt(temp[1]) );
+
+        } else {
+
+          switch (adSize) {
+              case "banner":
+                  return AdSize.BANNER;
+              case "largeBanner":
+                  return AdSize.LARGE_BANNER;
+              case "mediumRectangle":
+                  return AdSize.MEDIUM_RECTANGLE;
+              case "fullBanner":
+                  return AdSize.FULL_BANNER;
+              case "leaderBoard":
+                  return AdSize.LEADERBOARD;
+              case "smartBannerPortrait":
+                  return AdSize.SMART_BANNER;
+              case "smartBannerLandscape":
+                  return AdSize.SMART_BANNER;
+              case "smartBanner":
+                  return AdSize.SMART_BANNER;
+              default:
+                  return AdSize.BANNER;
+          }
         }
     }
 
