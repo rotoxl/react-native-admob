@@ -157,13 +157,9 @@ class ReactAdView extends ReactViewGroup {
         PublisherAdRequest adRequest = adRequestBuilder.build();
 
         ArrayList<AdSize> v = this.validAdSizes;
-        int n=v!=null? v.size(): 0;
-        if (n==1) //not the best thing i've ever done
-          this.adView.setAdSizes(v.get(0));
-        else if (n==2)
-          this.adView.setAdSizes(v.get(0), v.get(1) );
-        else if (n==3)
-          this.adView.setAdSizes(v.get(0), v.get(1), v.get(2) );
+
+        AdSize[] adSizesArray = this.validAdSizes.toArray(new AdSize[this.validAdSizes.size()]);
+        this.adView.setAdSizes(adSizesArray);
 
         this.adView.loadAd(adRequest);
     }
