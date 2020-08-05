@@ -99,6 +99,8 @@ RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
         [_interstitial loadRequest:request];
     } else {
         reject(@"E_AD_ALREADY_LOADED", @"Ad is already loaded.", nil);
+		_interstitial = nil;
+		
     }
 }
 
@@ -149,6 +151,8 @@ RCT_EXPORT_METHOD(isReady:(RCTResponseSenderBlock)callback)
     }
 	if (_requestAdReject != nil){
 		_requestAdReject(@"E_AD_REQUEST_FAILED", error.localizedDescription, error);
+		
+		_interstitial = nil;
 	}
 }
 
