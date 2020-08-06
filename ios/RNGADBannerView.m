@@ -18,8 +18,10 @@
 
 - (void)dealloc
 {
+    [_bannerView removeFromSuperview];
     _bannerView.delegate = nil;
     _bannerView.adSizeDelegate = nil;
+	_bannerView = nil;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -73,6 +75,7 @@
 	
 	NSMutableArray *x = [[NSMutableArray alloc] init];
 			
+	[x addObject:NSValueFromGADAdSize(kGADAdSizeFluid)];
 	for (int i=0; i< _validAdSizes.count; i++){
 		NSString *item=_validAdSizes[i];
 		NSValue *s = nil;
