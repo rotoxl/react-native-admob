@@ -20,9 +20,13 @@
 
 - (void)dealloc
 {
+	[_bannerView removeFromSuperview];
+	
     _bannerView.delegate = nil;
     _bannerView.adSizeDelegate = nil;
     _bannerView.appEventDelegate = nil;
+	
+	_bannerView = nil;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -33,12 +37,12 @@
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
 
-        _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeBanner];
+        _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeFluid];
         _bannerView.delegate = self;
         _bannerView.adSizeDelegate = self;
         _bannerView.appEventDelegate = self;
         _bannerView.rootViewController = rootViewController;
-        [self addSubview:_bannerView];
+        //[self addSubview:_bannerView]; // --> wait till adViewDidReceiveAd
     }
 
     return self;
@@ -67,13 +71,15 @@
 		[request setCustomTargeting:_targets];
 	}
 	
-	
+	NSLog(@"cargando _bannerView");
     [_bannerView loadRequest:request];
 }
 
 - (void)setValidAdSizes:(NSArray *)adSizes
 {
-    __block NSMutableArray *validAdSizes = [[NSMutableArray alloc] initWithCapacity:adSizes.count];
+    __block NSMutableArray *validAdSizes = [[NSMutableArray alloc] initWithCapacity:adSizes.count+1];
+	[validAdSizes addObject:NSValueFromGADAdSize(kGADAdSizeFluid)];
+	
     [adSizes enumerateObjectsUsingBlock:^(id jsonValue, NSUInteger idx, __unused BOOL *stop) {
         GADAdSize adSize = [RCTConvert GADAdSize:jsonValue];
         if (GADAdSizeEqualToSize(adSize, kGADAdSizeInvalid)) {
@@ -122,6 +128,9 @@
 /// Tells the delegate an ad request loaded an ad.
 - (void)adViewDidReceiveAd:(DFPBannerView *)adView
 {
+	NSLog(@"_bannerView adViewDidReceiveAd");
+	[self addSubview:_bannerView];
+
     if (self.onSizeChange) {
         self.onSizeChange(@{
                             @"width": @(adView.frame.size.width),
@@ -136,6 +145,8 @@
 - (void)adView:(DFPBannerView *)adView
 didFailToReceiveAdWithError:(GADRequestError *)error
 {
+	NSLog(@"_bannerView didFailToReceiveAdWithError");
+
     if (self.onAdFailedToLoad) {
         self.onAdFailedToLoad(@{ @"error": @{ @"message": [error localizedDescription] } });
     }
@@ -145,6 +156,8 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 /// to the user clicking on an ad.
 - (void)adViewWillPresentScreen:(DFPBannerView *)adView
 {
+	NSLog(@"_bannerView adViewWillPresentScreen");
+
     if (self.onAdOpened) {
         self.onAdOpened(@{});
     }
@@ -153,6 +166,8 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 /// Tells the delegate that the full screen view will be dismissed.
 - (void)adViewWillDismissScreen:(__unused DFPBannerView *)adView
 {
+	NSLog(@"_bannerView adViewWillDismissScreen");
+
     if (self.onAdClosed) {
         self.onAdClosed(@{});
     }
@@ -162,6 +177,8 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 /// the App Store), backgrounding the current app.
 - (void)adViewWillLeaveApplication:(DFPBannerView *)adView
 {
+	NSLog(@"_bannerView adViewWillLeaveApplication");
+
     if (self.onAdLeftApplication) {
         self.onAdLeftApplication(@{});
     }
@@ -171,6 +188,7 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 
 - (void)adView:(GADBannerView *)bannerView willChangeAdSizeTo:(GADAdSize)size
 {
+	NSLog(@"_bannerView adViewWillLeaveApplication");
     CGSize adSize = CGSizeFromGADAdSize(size);
     self.onSizeChange(@{
                         @"width": @(adSize.width),
