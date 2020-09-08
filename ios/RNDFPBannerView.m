@@ -27,6 +27,8 @@
     _bannerView.appEventDelegate = nil;
 	
 	_bannerView = nil;
+	
+	NSLog(@"_bannerView dealloc");
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -37,7 +39,7 @@
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
 
-        _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeFluid];
+        _bannerView = [[DFPBannerView alloc] initWithAdSize:kGADAdSizeMediumRectangle];
         _bannerView.delegate = self;
         _bannerView.adSizeDelegate = self;
         _bannerView.appEventDelegate = self;
@@ -78,7 +80,11 @@
 - (void)setValidAdSizes:(NSArray *)adSizes
 {
     __block NSMutableArray *validAdSizes = [[NSMutableArray alloc] initWithCapacity:adSizes.count+1];
-	[validAdSizes addObject:NSValueFromGADAdSize(kGADAdSizeFluid)];
+	
+	NSString *v=[_targets objectForKey:@"pos"][0];
+	if ([v isEqualToString:@"billboard"]){
+		[validAdSizes addObject:NSValueFromGADAdSize(kGADAdSizeFluid)];
+	}
 	
     [adSizes enumerateObjectsUsingBlock:^(id jsonValue, NSUInteger idx, __unused BOOL *stop) {
         GADAdSize adSize = [RCTConvert GADAdSize:jsonValue];
